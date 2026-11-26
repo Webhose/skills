@@ -160,7 +160,12 @@ export function buildIndex(root, tag) {
 
 async function main([command, tag]) {
   if (command === 'check') {
-    const response = await fetch(CATALOG);
+    let response = await fetch(CATALOG);
+    if (!response.ok) {
+      // One retry: the catalog can answer a passing 429, and a release must not stop on it after its tag is pushed.
+      await new Promise((resolve) => setTimeout(resolve, 10_000));
+      response = await fetch(CATALOG);
+    }
     if (!response.ok) throw new Error(`${CATALOG}: HTTP ${response.status}`);
     const { products } = await response.json();
     const errors = checkRepo(ROOT, new Set(products.flatMap((product) => product.tools.map((tool) => tool.name))));

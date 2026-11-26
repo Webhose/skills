@@ -19,6 +19,8 @@ Code, Codex and other agents that support skills.
 | [`webz-news-answers`](skills/webz-news-answers/SKILL.md) | `answer_webz_news` | A written, cited answer to one news question |
 | [`webz-news-search`](skills/webz-news-search/SKILL.md) | `news_search_by_webz` | News search in natural language |
 
+Each skill also has a page on docs.webz.io, under [Agent Skills](https://docs.webz.io/docs/webz/agent-skills).
+
 ## Install
 
 With the [skills CLI](https://github.com/vercel-labs/skills), which installs into Cursor, Claude Code, Codex and others:
@@ -27,6 +29,9 @@ With the [skills CLI](https://github.com/vercel-labs/skills), which installs int
 npx skills add Webhose/skills                     # choose from the list
 npx skills add Webhose/skills --skill webz-news   # one skill
 ```
+
+With the [Webz.io plugin](https://github.com/Webhose/webz-mcp-plugin) for Cursor and Claude Code, which connects the
+MCP server and brings every skill except `webz-news-search`.
 
 Or copy a skill's folder into your agent's skills directory, for example `.cursor/skills/`, `.claude/skills/` or
 `.agents/skills/`.
@@ -38,7 +43,8 @@ A skill only guides the agent. The tools come from the Webz.io MCP server, so th
 - `https://mcp.webz.io/mcp` serves every tool above except `news_search_by_webz`.
 - `https://mcp.webz.io/news-search/mcp` serves `news_search_by_webz`.
 
-Sign in with your Webz.io API token when asked. Setup for each client is at [mcp.webz.io](https://mcp.webz.io).
+Sign in with your Webz.io API token when asked. Setup for each client is at [mcp.webz.io](https://mcp.webz.io), and
+each tool's parameters are in the [MCP docs](https://docs.webz.io/docs/webz/mcp).
 
 ## Releases
 
@@ -50,8 +56,23 @@ Each release carries `skills.json`, an index with the name, description, tools a
 https://github.com/Webhose/skills/releases/latest/download/skills.json
 ```
 
-To release, push a `vX.Y.Z` tag on `main`. The Release workflow validates the skills, builds the index and publishes
-the release. A published tag cannot be moved or deleted.
+To release, sign in with `gh auth login` and run this from a clean checkout of `main`:
+
+```bash
+scripts/release.sh 1.2.0
+```
+
+It runs the checks and pushes the tag `v1.2.0`. The Release workflow validates the skills, builds the index and
+publishes the release. The script then starts the two jobs that follow a release:
+
+- `skills-sync.yml` in `Webhose/docs`, a private repository, updates the skill pages and the skill sections on
+  docs.webz.io.
+- [Skills](https://github.com/Webhose/webz-mcp-plugin/actions/workflows/skills.yml) in `Webhose/webz-mcp-plugin` opens
+  a pull request that pins the release in the plugin, when the release changes a skill the plugin carries. It needs
+  the tag as input.
+
+If one of them did not start, run it from its Actions page. [mcp.webz.io](https://mcp.webz.io) reads the latest
+release by itself, within 10 minutes. A published tag cannot be moved or deleted.
 
 ## Contributing
 
