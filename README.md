@@ -68,7 +68,8 @@ publishes the release. The script then starts the two jobs that follow a release
 - `skills-sync.yml` in `Webhose/docs`, a private repository, updates the skill pages and the skill sections on
   docs.webz.io.
 - [Skills](https://github.com/Webhose/webz-mcp-plugin/actions/workflows/skills.yml) in `Webhose/webz-mcp-plugin` opens
-  a pull request that pins the release in the plugin. It needs the tag as input.
+  a pull request that pins the release in the plugin, when the release changes a skill the plugin carries. It needs
+  the tag as input.
 
 If one of them did not start, run it from its Actions page. [mcp.webz.io](https://mcp.webz.io) reads the latest
 release by itself, within 10 minutes. A published tag cannot be moved or deleted.

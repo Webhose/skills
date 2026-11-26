@@ -34,7 +34,7 @@ for _ in $(seq 60); do
   fi
   sleep 5
 done
-[ -n "$published" ] || { echo "$tag was not published in 5 minutes: https://github.com/Webhose/skills/actions" >&2; exit 1; }
+[ -n "$published" ] || { echo "$tag is pushed but not published after 5 minutes. Re-run its Release job: https://github.com/Webhose/skills/actions" >&2; exit 1; }
 
 started=yes
 gh workflow run skills-sync.yml --repo Webhose/docs || started=""
