@@ -14,17 +14,20 @@ Use the `news_search_by_webz` MCP tool to answer news and current-events questio
 - The user asks about news, recent events, announcements, or coverage of a topic.
 - Fresh, sourced information matters more than general knowledge.
 
+For a written, cited answer, use `answer_webz_news`. For mention counts, use `aggregate_webz_news`.
+
 ## How to call
 
-- `query`: a natural-language topic or question ("EU AI regulation progress"), not keyword syntax.
+- `query`: a natural-language topic or question ("EU AI regulation progress"), not keyword syntax. At most 750 characters and 100 words.
 - The default window is the last 7 days. For older news pass `days` (up to 37) or `allow_all_dates: true` for the full indexed coverage window.
 - `k`: articles to return - default 10, max 100. Raise it for broad research, lower it for a quick answer.
 - `sort_by`: best_score (default), similarity, date_desc, or date_asc.
 - `min_similarity`: optional semantic similarity floor, 0.4-1.0 (default 0.4).
 - `trust_gte`: optional minimum source trust score, 0.0-1.0.
 - `score_gte`: minimum match score, 0-10. Default 4. Set 0 to disable the floor.
-- `score_lte`: optional maximum match score, 0-10.
+- `score_lte`: optional maximum match score, 0-10. Not below `score_gte`.
 - `allow_multiple_chunks_per_article`: default false. Set true only when the user wants more than one relevant excerpt from the same article.
+- Wait at least 1 second between calls. Do not call this tool in parallel.
 
 ## Filters (optional, values are case-insensitive)
 
@@ -49,6 +52,6 @@ Map the user's topic to the closest category ("stock market crash" -> Economy, B
 
 ## Using results
 
-- Each result has a title, URL, publish date, and text excerpt.
+- Each result has a title, URL, publish date, score, and text excerpt.
 - Cite the article URLs in your answer.
 - If results are empty, retry with `days: 37` or `allow_all_dates: true` and fewer filters before reporting nothing found.
