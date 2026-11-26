@@ -1,0 +1,23 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  # Weekly: catches a tool that was renamed or removed after its skill was written.
+  # ponytail: GitHub pauses scheduled runs after 60 days without a commit; re-enable them from the Actions tab.
+  schedule:
+    - cron: '17 6 * * 1'
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - run: node --test scripts/skills.test.mjs
+      - run: node scripts/skills.mjs check

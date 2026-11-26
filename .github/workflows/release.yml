@@ -1,0 +1,27 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # create the GitHub release
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Only release what is on main
+        run: git merge-base --is-ancestor "$GITHUB_SHA" origin/main
+      - run: node --test scripts/skills.test.mjs
+      - run: node scripts/skills.mjs check
+      - run: node scripts/skills.mjs index "$GITHUB_REF_NAME"
+      - run: gh release create "$GITHUB_REF_NAME" skills.json --verify-tag --generate-notes
+        env:
+          GH_TOKEN: ${{ github.token }}
